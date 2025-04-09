@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-mlflow
+  labels:
+    app: mlflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow
+  template:
+    metadata:
+      labels:
+        app: mlflow
+    spec:
+      containers:
+      - name: mlflow
+        image: {{ .Values.mlflow.image.repository }}:{{ .Values.mlflow.image.tag }}
+        ports:
+        - containerPort: {{ .Values.mlflow.port }}
+        volumeMounts:
+        - name: mlflow-data
+          mountPath: /app/mlflow-data
+        - name: mlflow-artifacts
+          mountPath: /app/artifacts
+      volumes:
+      - name: mlflow-data
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-mlflow-pvc
+      - name: mlflow-artifacts
+        emptyDir: {}

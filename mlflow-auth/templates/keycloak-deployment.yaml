@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-keycloak
+  labels:
+    app: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+      - name: keycloak
+        image: {{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}
+        env:
+        - name: KEYCLOAK_ADMIN
+          value: {{ .Values.keycloak.adminUser }}
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          value: {{ .Values.keycloak.adminPassword }}
+        - name: KC_DB
+          value: "dev-mem"  # Use in-memory DB for simplicity
+        command: ["/opt/keycloak/bin/kc.sh", "start-dev"]
+        ports:
+        - containerPort: {{ .Values.keycloak.port }}

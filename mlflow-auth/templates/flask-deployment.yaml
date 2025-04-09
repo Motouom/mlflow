@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-flask
+  labels:
+    app: flask
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask
+  template:
+    metadata:
+      labels:
+        app: flask
+    spec:
+      containers:
+      - name: flask
+        image: {{ .Values.flask.image.repository }}:{{ .Values.flask.image.tag }}
+        ports:
+        - containerPort: {{ .Values.flask.port }}
+        env:
+        - name: FLASK_SECRET_KEY
+          value: {{ .Values.flask.env.FLASK_SECRET_KEY }}
+        - name: KEYCLOAK_CLIENT_ID
+          value: {{ .Values.flask.env.KEYCLOAK_CLIENT_ID }}
+        - name: KEYCLOAK_CLIENT_SECRET
+          value: {{ .Values.flask.env.KEYCLOAK_CLIENT_SECRET }}
+        - name: KEYCLOAK_SERVER_METADATA_URL
+          value: {{ .Values.flask.env.KEYCLOAK_SERVER_METADATA_URL }}
+        - name: MLFLOW_URL
+          value: {{ .Values.flask.env.MLFLOW_URL }}

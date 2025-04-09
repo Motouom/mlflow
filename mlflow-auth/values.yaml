@@ -1,0 +1,38 @@
+# Flask Auth Proxy
+flask:
+  image:
+    repository: flask-auth-proxy
+    tag: "1.0.0"
+  port: 5001
+  env:
+    FLASK_SECRET_KEY: "c4ae134e10b764cea814d98418c03c66"
+    KEYCLOAK_CLIENT_ID: "mlflow-client"
+    KEYCLOAK_CLIENT_SECRET: "k68eXx4TnZ26H8T8LJjG7GP4DttgLV2R"
+    KEYCLOAK_SERVER_METADATA_URL: "http://keycloak:8080/realms/mlflow/.well-known/openid-configuration"
+    MLFLOW_URL: "http://mlflow:5000"
+
+# MLflow Server
+mlflow:
+  image:
+    repository: mlflow-server
+    tag: "1.0.0"
+  port: 5000
+
+# Keycloak
+keycloak:
+  enabled: true
+  image:
+    repository: quay.io/keycloak/keycloak
+    tag: "24.0.5"
+  port: 8080
+  adminUser: admin
+  adminPassword: admin
+  realm: mlflow
+  clientId: mlflow-client
+  clientSecret: k68eXx4TnZ26H8T8LJjG7GP4DttgLV2R
+
+# PersistentVolumeClaim for MLflow
+persistence:
+  enabled: true
+  storageClass: standard
+  size: 1Gi
